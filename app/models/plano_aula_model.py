@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
 from app.models import db
 
+
 class PlanoAula(db.Model):
-    __tablename__ = 'planos_aula'
+    __tablename__ = "planos_aula"
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -27,10 +28,14 @@ class PlanoAula(db.Model):
             "titulo": self.titulo,
             "disciplina": self.disciplina,
             "ementa": self.ementa,
-            "data_prevista": self.data_prevista.isoformat() if self.data_prevista else None,
+            "data_prevista": self.data_prevista.isoformat()
+            if self.data_prevista
+            else None,
             "objetivo": self.objetivo,
             "conteudos": self.conteudos,
             "recursos_apoio": self.recursos_apoio,
             "tags": self.tags,
-            "data_cadastro": self.data_cadastro.isoformat() if self.data_cadastro else None
+            "data_cadastro": self.data_cadastro.isoformat()
+            if self.data_cadastro
+            else None,
         }

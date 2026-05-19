@@ -3,6 +3,7 @@ import json
 import logging
 import google.generativeai as genai
 
+
 class AIService:
     @staticmethod
     def gerar_sugestoes(titulo, disciplina, ementa):
@@ -28,14 +29,14 @@ class AIService:
 
         try:
             nome_do_modelo = "gemini-2.5-flash"
-            
+
             model = genai.GenerativeModel(nome_do_modelo)
 
             resposta = model.generate_content(
                 prompt,
                 generation_config=genai.GenerationConfig(
                     response_mime_type="application/json"
-                )
+                ),
             )
 
             conteudo_ia = resposta.text
@@ -49,7 +50,9 @@ class AIService:
             return dicionario_resposta, tokens_usados
 
         except json.JSONDecodeError as e:
-            logging.error(f"A IA não retornou um JSON válido. Retorno puro: {conteudo_ia}")
+            logging.error(
+                f"A IA não retornou um JSON válido. Retorno puro: {conteudo_ia}"
+            )
             raise Exception("Erro ao processar a resposta da IA. Formato inválido.")
         except Exception as e:
             logging.error(f"Erro na comunicação com o Gemini: {str(e)}")

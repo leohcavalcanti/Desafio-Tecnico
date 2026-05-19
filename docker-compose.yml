@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-
+  # SERVIÇO DO BANCO DE DADOS POSTGRESQL
   database:
     image: postgres:15-alpine
     container_name: postgres_desafio
@@ -17,6 +17,21 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  
+  # SERVIÇO DA APLICAÇÃO
+  web:
+    build: .
+    container_name: flask_desafio
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    env_file:
+      - .env
+    environment:
+      # Isso sobrescreve a variável do .env!
+      DB_HOST: database
 
 volumes:
   postgres_data:

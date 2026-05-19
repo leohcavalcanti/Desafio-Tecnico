@@ -3,7 +3,6 @@ import json
 import logging
 import google.generativeai as genai
 
-
 class AIService:
     @staticmethod
     def gerar_sugestoes(titulo, disciplina, ementa):
@@ -21,25 +20,25 @@ class AIService:
         Título da Aula: {titulo}
         Ementa/Resumo: {ementa}
 
-        Retorne EXATAMENTE um JSON válido, sem NENHUM texto antes ou depois, com a seguinte estrutura:
-        {{
-            "conteudos_complementares": "Um parágrafo recomendando livros, vídeos ou artigos.",
-            "topicos_relacionados": ["Tópico 1", "Tópico 2"],
-            "tags_recomendadas": ["#tag1", "#tag2", "#tag3"]
-        }}
-        
-        Atenção: Retorne sempre exatamente 3 tags_recomendadas, todas em letras minúsculas e sem espaços. Não inclua a formatação markdown ```json.
+        Preencha e retorne as seguintes informações:
+        1. "conteudos_complementares": Um parágrafo recomendando livros, vídeos ou artigos.
+        2. "topicos_relacionados": Uma lista com 2 a 3 tópicos.
+        3. "tags_recomendadas": Exatamente 3 tags, todas em letras minúsculas e sem espaços (ex: ["#tag1", "#tag2", "#tag3"]).
         """
 
         try:
-            model = genai.GenerativeModel("gemini-1.5-flash")
+            nome_do_modelo = "gemini-2.5-flash"
+            
+            model = genai.GenerativeModel(nome_do_modelo)
 
-            resposta = model.generate_content(prompt)
+            resposta = model.generate_content(
+                prompt,
+                generation_config=genai.GenerationConfig(
+                    response_mime_type="application/json"
+                )
+            )
 
             conteudo_ia = resposta.text
-
-            if conteudo_ia.strip().startswith("```json"):
-                conteudo_ia = conteudo_ia.strip().strip("```json").strip("```").strip()
 
             tokens_entrada = model.count_tokens(prompt).total_tokens
             tokens_saida = model.count_tokens(conteudo_ia).total_tokens
@@ -49,10 +48,8 @@ class AIService:
 
             return dicionario_resposta, tokens_usados
 
-        except json.JSONDecodeError:
-            logging.error(
-                f"A IA não retornou um JSON válido. Retorno puro: {conteudo_ia}"
-            )
+        except json.JSONDecodeError as e:
+            logging.error(f"A IA não retornou um JSON válido. Retorno puro: {conteudo_ia}")
             raise Exception("Erro ao processar a resposta da IA. Formato inválido.")
         except Exception as e:
             logging.error(f"Erro na comunicação com o Gemini: {str(e)}")

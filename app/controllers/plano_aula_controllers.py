@@ -10,7 +10,6 @@ def criar_plano():
 
     campos_obrigatorios = [
         "titulo",
-        "objetivo",
         "ementa",
         "data_prevista",
         "disciplina",
